@@ -36,7 +36,7 @@ You have to edit the source to change the source and destination folders.
 
 **Requires**
  * Python 2.7+
- * [tag](https://github.com/jdberry/tag)
+ * [jdberry/tag](https://github.com/jdberry/tag)
 
 **Usage**
 ```
