@@ -26,10 +26,10 @@ def cleanup():
         shutil.rmtree(f)
 
 def getTags(f):
-    return subprocess.check_output(["/usr/local/bin/tag","-lN",f])
+    return subprocess.check_output(['/usr/local/bin/tag','-lN',f]).rstrip()
 
 def setTags(f,tags):
-    p = subprocess.Popen(['tag','-s',tags,f], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen(['/usr/local/bin/tag','-s',tags,f], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = p.communicate()
     
     if stdout:
@@ -42,20 +42,20 @@ def zipFile(src, dst, junk, natural):
     logger.info('Zipping content of {} inside: {}'.format(src,dst))
     for dirname, _, files in os.walk(src):
         # ignore hidden files
-        files = [f for f in files if not f[0] == '.']
+        files = [(f,f.strip('-')) for f in files if not f[0] == '.']
         i = 1
         if natural:
-            files = natsorted(files)       
-        for filename in files:
+        	files = natsorted(files, key=lambda f: f[1])       
+        for filename,alias in files:
             absname = os.path.abspath(os.path.join(dirname, filename))
             if natural:
                 _,ext = os.path.splitext(filename)
-                filename = '{:04d}{}'.format(i,ext)
+                alias = '{:04d}{}'.format(i,ext)
                 i = i+1
             if junk:
-                arcname = filename
+                arcname = alias
             else:
-                arcname = os.path.join(os.path.relpath(dirname, src),filename)
+                arcname = os.path.join(os.path.relpath(dirname, src),alias)
             logger.info('zipping {} as {}'.format(absname,arcname))
             zf.write(absname, arcname)
     zf.close()
@@ -119,6 +119,7 @@ if __name__ == "__main__":
 	            
 	            if args.tags:
 	                tags = getTags(f)
+	                logger.debug('File {} has tags: {}'.format(f,tags))
 	            
 	            tmpdir = unpack(f)
 	            root, _ = os.path.splitext(os.path.basename(f))
@@ -126,6 +127,7 @@ if __name__ == "__main__":
 	            target = os.path.join(dest,target)
 	            zipFile(tmpdir,target,args.flatten,args.rename)
 	            if args.tags:
+	            	logger.debug('Restore tags "{}" on file {}'.format(tags,target))
 	                setTags(target, tags)
 	    cleanup()
 	except Exception, e:

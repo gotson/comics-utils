@@ -6,11 +6,12 @@ Scripts to manage my digital comics collection
 cbz.py
 ------
 CBZ utility can be used on both archives, to cleanup existing cbz/cbr/cb7, and folders, to create a new cbz archive.
-Folders are processed recursively.
+Folders are processed recursively to find folders containing files, but archives inside a processed folder won't be cleaned up.
 Options include:
  - preserving OSX tags (for archives only)
  - flatten the directory structure (same as -j option on zip)
  - rename files using natural sort
+Thanks to The Unarchiver, you can also process **PDF files** for cleanup !
 
 **Requires**
  * Python 2.7+
