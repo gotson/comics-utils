@@ -15,7 +15,7 @@ do
 	for f in $files; do
 	  new=$(printf "%04d" ${i}) #04 pad to length of 4
 	  ext=${f##*.}
-	  mv ${f} $tmp/${new}.${ext}
+	  mv "${f}" $tmp/${new}.${ext}
 	  let i=i+1
 	done
 	
