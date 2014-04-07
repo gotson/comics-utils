@@ -3,27 +3,40 @@ comics-utils
 
 Scripts to manage my digital comics collection
 
-makeCBZ.sh
-----------
-Use to create massively CBZ archives from folders containing image files.
-
-**Usage**
-```
-pwd> /path/to/makeCBZ.sh
-```
-
-flatten.sh
-----------
-Extract archive content to temporary folder, and rezip using store level (-0) and remove junk folders (-j).
+cbz.py
+------
+CBZ utility can be used on both archives, to cleanup existing cbz/cbr/cb7, and folders, to create a new cbz archive.
+Folders are processed recursively.
+Options include:
+ - preserving OSX tags (for archives only)
+ - flatten the directory structure (same as -j option on zip)
+ - rename files using natural sort
 
 **Requires**
+ * Python 2.7+
+ * [jdberry/tag](https://github.com/jdberry/tag) (if using the --tags option)
+ * [natsort](https://pypi.python.org/pypi/natsort)
  * [The Unarchiver command line tools](http://unarchiver.c3.cx/commandline)
 
 **Usage**
 ```
-> /path/to/flatten.sh archive.cbz
+usage: cbz.py [-h] [--tags] [--rename] [--flatten] [--destination DESTINATION]
+              infiles [infiles ...]
 
-> find . -name '*.cbz -print0 | xargs -0 /path/to/flatten.sh
+CBZ utility
+
+positional arguments:
+  infiles
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --tags, -t            Preserve OSX tags (uses
+                        https://github.com/jdberry/tag)
+  --rename, -r          Rename files using natural sort
+  --flatten, -f         Flatten archive by removing folder structure
+  --destination DESTINATION, -d DESTINATION
+                        Destination for processed files. If unspecified
+                        working directory is used instead
 ```
 
 sync-folder.py
