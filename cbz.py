@@ -80,10 +80,10 @@ if __name__ == "__main__":
     
     # arguments management
     parser = argparse.ArgumentParser(description='CBZ utility')
-    parser.add_argument('--tags', '-t', action='store_true', help='Preserve OSX tags (uses https://github.com/jdberry/tag)')
-    parser.add_argument('--rename', '-r', action='store_true', help='Rename files using natural sort')
-    parser.add_argument('--flatten', '-f', action='store_true', help='Flatten archive by removing folder structure')
-    parser.add_argument('--destination', '-d', nargs=1,  help='Destination for processed files. If unspecified working directory is used instead')
+    parser.add_argument('-t', '--tags', action='store_true', help='Preserve OSX tags (uses https://github.com/jdberry/tag)')
+    parser.add_argument('-r', '--rename', action='store_true', help='Rename files using natural sort')
+    parser.add_argument('-f', '--flatten', action='store_true', help='Flatten archive by removing folder structure')
+    parser.add_argument('-d', '--destination', nargs=1,  help='Destination for processed files. If unspecified working directory is used instead')
     parser.add_argument('infiles', nargs='+')
     args = parser.parse_args()
     

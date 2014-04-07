@@ -20,8 +20,7 @@ Options include:
 
 **Usage**
 ```
-usage: cbz.py [-h] [--tags] [--rename] [--flatten] [--destination DESTINATION]
-              infiles [infiles ...]
+usage: cbz.py [-h] [-t] [-r] [-f] [-d DESTINATION] infiles [infiles ...]
 
 CBZ utility
 
@@ -30,11 +29,11 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  --tags, -t            Preserve OSX tags (uses
+  -t, --tags            Preserve OSX tags (uses
                         https://github.com/jdberry/tag)
-  --rename, -r          Rename files using natural sort
-  --flatten, -f         Flatten archive by removing folder structure
-  --destination DESTINATION, -d DESTINATION
+  -r, --rename          Rename files using natural sort
+  -f, --flatten         Flatten archive by removing folder structure
+  -d DESTINATION, --destination DESTINATION
                         Destination for processed files. If unspecified
                         working directory is used instead
 ```
