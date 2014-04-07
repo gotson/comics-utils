@@ -65,7 +65,7 @@ if __name__ == "__main__":
     logger = logging.getLogger('cbz')
     logger.setLevel(logging.DEBUG)
     # file handler
-    fh = logging.FileHandler('cbz.log')
+    fh = logging.FileHandler(os.path.expanduser('~/Library/Logs/cbz.log'))
     fh.setLevel(logging.DEBUG)
     # console handler
     ch = logging.StreamHandler()
