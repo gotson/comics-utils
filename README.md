@@ -11,6 +11,7 @@ Options include:
  - preserving OSX tags (for archives only)
  - flatten the directory structure (same as -j option on zip)
  - rename files using natural sort
+
 Thanks to The Unarchiver, you can also process **PDF files** for cleanup !
 
 **Requires**
