@@ -40,6 +40,15 @@ optional arguments:
                         working directory is used instead
 ```
 
+**OSX Automator**
+
+You can hook up the scripts using Automator to have a right-click action:
+![alt tag](https://raw.githubusercontent.com/gotson/comics-utils/master/wiki/cbz-as-service.png)
+
+You can also configure it as a folder action, to automatically perform post-processing for instance:
+![alt tag](https://raw.githubusercontent.com/gotson/comics-utils/master/wiki/cbz-as-folderaction.png)
+
+
 sync-folder.py
 --------------
 Use OSX tags to create a replica of your directory structure for easy replication with [Cheetah Sync](http://www.jrtstudio.com/cheetah-sync-android-wireless-sync).
