@@ -15,9 +15,9 @@ def unpack(f):
     stdout, stderr = p.communicate()
     
     if stdout:
-        logger.info(stdout)
+        logging.info(stdout)
     if stderr:
-        logger.error(stderr)
+        logging.error(stderr)
     return tmpdir
 
 # cleanup all temporary folders created
@@ -33,13 +33,13 @@ def setTags(f,tags):
     stdout, stderr = p.communicate()
     
     if stdout:
-        logger.info(stdout)
+        logging.info(stdout)
     if stderr:
-        logger.error(stderr)
+        logging.error(stderr)
 
 def zipFile(src, dst, junk, natural):
     zf = zipfile.ZipFile('{}'.format(dst), 'w', zipfile.ZIP_STORED)
-    logger.info('Zipping content of {} inside: {}'.format(src,dst))
+    logging.info('Zipping content of {} inside: {}'.format(src,dst))
     for dirname, _, files in os.walk(src):
         # ignore hidden files
         files = [f for f in files if not f[0] == '.']
@@ -56,39 +56,40 @@ def zipFile(src, dst, junk, natural):
                 arcname = filename
             else:
                 arcname = os.path.join(os.path.relpath(dirname, src),filename)
-            logger.info('zipping {} as {}'.format(absname,arcname))
+            logging.info('zipping {} as {}'.format(absname,arcname))
             zf.write(absname, arcname)
     zf.close()
 
 if __name__ == "__main__":
     try:
-        # logging
-        logger = logging.getLogger('cbz')
-        logger.setLevel(logging.DEBUG)
-        # file handler
-        fh = logging.FileHandler(os.path.expanduser('~/Library/Logs/cbz.log'))
-        fh.setLevel(logging.DEBUG)
-        # console handler
-        ch = logging.StreamHandler()
-        ch.setLevel(logging.DEBUG)
-        # create formatter and add it to the handlers
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        fh.setFormatter(formatter)
-        ch.setFormatter(formatter)
-        # add the handlers to the logger
-        logger.addHandler(fh)
-        logger.addHandler(ch)
-        
         # arguments management
         parser = argparse.ArgumentParser(description='CBZ utility')
         parser.add_argument('-t', '--tags', action='store_true', help='Preserve OSX tags (uses https://github.com/jdberry/tag)')
         parser.add_argument('-r', '--rename', action='store_true', help='Rename files using natural sort')
         parser.add_argument('-f', '--flatten', action='store_true', help='Flatten archive by removing folder structure')
         parser.add_argument('-d', '--destination', nargs=1,  help='Destination for processed files. If unspecified working directory is used instead')
+        parser.add_argument('-l', '--logfile', nargs=1,  help='Specify a custom logfile name/location')
+        parser.add_argument('-L', '--loglevel', nargs=1,  help='Log level', choices=['CRITICAL','ERROR','WARNING','INFO','DEBUG'])
         parser.add_argument('infiles', nargs='+')
         args = parser.parse_args()
         
-        logger.debug('Args: {}'.format(args))
+        # default log level is DEBUG
+        loglevel = args.loglevel[0] if args.loglevel else logging.DEBUG
+        logformat = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        logging.basicConfig(level=loglevel,format=logformat)
+        # add file logger
+        if args.logfile:
+          try:
+            logger = logging.getLogger()
+            fh = logging.FileHandler(args.logfile[0])
+            fh.setFormatter(logging.Formatter(logformat))
+            logger.addHandler(fh)
+          except Exception, e:
+            logging.error('Cannot log to file: {}'.format(args.logfile[0]))
+            logging.exception(e)
+            pass
+               
+        logging.debug('Command line arguments: {}'.format(args))
         
         # temporary items that will need cleanup
         tmp = []
@@ -100,14 +101,14 @@ if __name__ == "__main__":
             dest = os.getcwd()
         if not os.path.exists(dest):
             os.makedirs(dest)
-        logger.debug('Destination folder: {}'.format(dest))
+        logging.debug('Destination folder: {}'.format(dest))
         
         for f in args.infiles:    
             f = os.path.abspath(f)
             if os.path.isdir(f):
-                logger.debug('Processing directory recursively: {}'.format(f))
+                logging.debug('Processing directory recursively: {}'.format(f))
                 for dirname, folders, files in os.walk(f):
-                    logger.debug('Processing directory: {}'.format(dirname))
+                    logging.debug('Processing directory: {}'.format(dirname))
                     # ignore hidden files
                     files = [f for f in files if not f[0] == '.']
                     if files:
@@ -115,11 +116,11 @@ if __name__ == "__main__":
                         target = os.path.join(dest,target)
                         zipFile(dirname,target,args.flatten,args.rename)   
             else:
-                logger.debug('Processing file: {}'.format(f))
+                logging.debug('Processing file: {}'.format(f))
                 
                 if args.tags:
                     tags = getTags(f)
-                    logger.debug('File {} has tags: {}'.format(f,tags))
+                    logging.debug('File {} has tags: {}'.format(f,tags))
                 
                 tmpdir = unpack(f)
                 root, _ = os.path.splitext(os.path.basename(f))
@@ -127,8 +128,8 @@ if __name__ == "__main__":
                 target = os.path.join(dest,target)
                 zipFile(tmpdir,target,args.flatten,args.rename)
                 if args.tags:
-                    logger.debug('Restore tags "{}" on file {}'.format(tags,target))
+                    logging.debug('Restore tags "{}" on file {}'.format(tags,target))
                     setTags(target, tags)
         cleanup()
     except Exception, e:
-        logger.exception(e)
+        logging.exception(e)
