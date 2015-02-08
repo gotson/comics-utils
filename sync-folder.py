@@ -22,7 +22,7 @@ def getTags(f):
 	return filter(None,subprocess.check_output(["/usr/local/bin/tag","-Ng",f]).split('\n'))
 
 
-root = '/Books/'	
+root = '/Books/'
 syncdir = '/Books/_sync/'
 size = 0
 count = 0
@@ -34,15 +34,15 @@ except:
 	pass
 os.makedirs(syncdir)
 
-# list of dirs to sync, to check against children to avoid having to tag children folders	
+# list of dirs to sync, to check against children to avoid having to tag children folders
 lDirSync=[]
-		
+
 for dirpath, folders, files in os.walk(root):
 	files = [f for f in files if not f[0] == '.']
 	bSync = False
 	#check for parents with 'sync' tag
 	for p in lDirSync:
-		if os.path.commonprefix([dirpath,p]) == p:
+		if os.path.commonprefix([os.path.dirname(dirpath),p]) == p:
 			bSync = True
 	#if getColor(dirpath) == 'blue':
 	if 'sync' in getTags(dirpath):
