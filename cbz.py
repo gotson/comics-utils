@@ -7,13 +7,13 @@ import logging
 import tempfile
 import zipfile
 
-# unpack archive in temporary folder and return folder reference 
+# unpack archive in temporary folder and return folder reference
 def unpack(f):
     tmpdir = tempfile.mkdtemp()
     tmp.append(tmpdir)
     p = subprocess.Popen(['/usr/local/bin/unar','-o',tmpdir,f], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = p.communicate()
-    
+
     if stdout:
         logging.info(stdout)
     if stderr:
@@ -31,7 +31,7 @@ def getTags(f):
 def setTags(f,tags):
     p = subprocess.Popen(['/usr/local/bin/tag','-s',tags,f], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = p.communicate()
-    
+
     if stdout:
         logging.info(stdout)
     if stderr:
@@ -67,12 +67,12 @@ if __name__ == "__main__":
         parser.add_argument('-t', '--tags', action='store_true', help='Preserve OSX tags (uses https://github.com/jdberry/tag)')
         parser.add_argument('-r', '--rename', action='store_true', help='Rename files using natural sort')
         parser.add_argument('-f', '--flatten', action='store_true', help='Flatten archive by removing folder structure')
-        parser.add_argument('-d', '--destination', nargs=1,  help='Destination for processed files. If unspecified working directory is used instead')
+        parser.add_argument('-d', '--destination', nargs=1,  help='Destination for processed files. If unspecified file directory is used instead')
         parser.add_argument('-l', '--logfile', nargs=1,  help='Specify a custom logfile name/location')
         parser.add_argument('-L', '--loglevel', nargs=1,  help='Log level', choices=['CRITICAL','ERROR','WARNING','INFO','DEBUG'])
         parser.add_argument('infiles', nargs='+')
         args = parser.parse_args()
-        
+
         # default log level is DEBUG
         loglevel = args.loglevel[0] if args.loglevel else logging.DEBUG
         logformat = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -88,22 +88,22 @@ if __name__ == "__main__":
             logging.error('Cannot log to file: {}'.format(args.logfile[0]))
             logging.exception(e)
             pass
-               
+
         logging.debug('Command line arguments: {}'.format(args))
-        
+
         # temporary items that will need cleanup
         tmp = []
-        
+
         # destination folder
         if args.destination:
             dest = os.path.abspath(args.destination[0])
-        else:
-            dest = os.getcwd()
-        if not os.path.exists(dest):
-            os.makedirs(dest)
-        logging.debug('Destination folder: {}'.format(dest))
-        
-        for f in args.infiles:    
+        # else:
+        #     dest = os.getcwd()
+            if not os.path.exists(dest):
+                os.makedirs(dest)
+            logging.debug('Destination folder: {}'.format(dest))
+
+        for f in args.infiles:
             f = os.path.abspath(f)
             if os.path.isdir(f):
                 logging.debug('Processing directory recursively: {}'.format(f))
@@ -114,17 +114,19 @@ if __name__ == "__main__":
                     if files:
                         target = '{}.cbz'.format(os.path.basename(os.path.normpath(dirname)))
                         target = os.path.join(dest,target)
-                        zipFile(dirname,target,args.flatten,args.rename)   
+                        zipFile(dirname,target,args.flatten,args.rename)
             else:
                 logging.debug('Processing file: {}'.format(f))
-                
+
                 if args.tags:
                     tags = getTags(f)
                     logging.debug('File {} has tags: {}'.format(f,tags))
-                
+
                 tmpdir = unpack(f)
                 root, _ = os.path.splitext(os.path.basename(f))
                 target = '{}.cbz'.format(root)
+                if not args.destination:
+                    dest = os.path.dirname(f)
                 target = os.path.join(dest,target)
                 zipFile(tmpdir,target,args.flatten,args.rename)
                 if args.tags:
