@@ -61,5 +61,16 @@ for dirpath, folders, files in os.walk(root):
 				os.link(filepath,os.path.join(destdir,file))
 				size += os.path.getsize(filepath)
 				count += 1
+	else:
+		relpath = os.path.relpath(dirpath,root)
+		destdir = os.path.join(syncdir,relpath)
+		for file in files:
+			filepath = os.path.join(dirpath, file)
+			if 'sync' in getTags(filepath):
+				if not os.path.exists(destdir):
+					os.makedirs(destdir)
+				os.link(filepath,os.path.join(destdir,file))
+				size += os.path.getsize(filepath)
+				count += 1
 
 print '{} {} files linked, total {} bytes'.format(datetime.now(),count,size)
