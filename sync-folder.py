@@ -15,13 +15,14 @@ count = 0
 
 # clean destination
 for the_file in os.listdir(syncdir):
-    file_path = os.path.join(syncdir, the_file)
-    try:
-        if os.path.isfile(file_path):
-            os.remove(file_path)
-        elif os.path.isdir(file_path): shutil.rmtree(file_path)
-    except:
-        pass
+	if not the_file.startswith('.'):
+		file_path = os.path.join(syncdir, the_file)
+		try:
+			if os.path.isfile(file_path):
+				os.remove(file_path)
+			elif os.path.isdir(file_path): shutil.rmtree(file_path)
+		except:
+			pass
 if not os.path.exists(syncdir):
 	os.makedirs(syncdir)
 
