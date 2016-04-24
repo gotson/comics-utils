@@ -17,6 +17,8 @@ SYNC = 'sync'
 
 # list of dirs to sync, to check against children to avoid having to tag children folders
 lDirSync=[]
+# list of dirs read, to check against children to avoid having to tag children folders
+lDirRead=[]
 # list of files to sync, in a tuple form (source, destination)
 lSync=[]
 # list of existing files in destination folder
@@ -34,12 +36,16 @@ for dirpath, folders, files in os.walk(root):
 	files = [f for f in files if not f[0] == '.']
 	# skip 'read' directories completely
 	if READ in getTags(dirpath):
+		lDirRead.append(dirpath)
 		continue
 	bSync = False
 	# check for parents with 'sync' tag
 	for p in lDirSync:
 		if os.path.commonprefix([os.path.dirname(dirpath),p]) == p:
 			bSync = True
+	for p in lDirRead:
+		if os.path.commonprefix([os.path.dirname(dirpath),p]) == p:
+			bSync = False
 	if SYNC in getTags(dirpath):
 		lDirSync.append(dirpath)
 		bSync = True
