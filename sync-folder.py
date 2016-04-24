@@ -12,6 +12,9 @@ def getTags(f):
 root = '/Books/'
 syncdir = '/Books/_sync/'
 
+READ = 'read'
+SYNC = 'sync'
+
 # list of dirs to sync, to check against children to avoid having to tag children folders
 lDirSync=[]
 # list of files to sync, in a tuple form (source, destination)
@@ -29,12 +32,15 @@ for dirpath, folders, files in os.walk(syncdir):
 # go through source
 for dirpath, folders, files in os.walk(root):
 	files = [f for f in files if not f[0] == '.']
+	# skip 'read' directories completely
+	if READ in getTags(dirpath):
+		continue
 	bSync = False
 	# check for parents with 'sync' tag
 	for p in lDirSync:
 		if os.path.commonprefix([os.path.dirname(dirpath),p]) == p:
 			bSync = True
-	if 'sync' in getTags(dirpath):
+	if SYNC in getTags(dirpath):
 		lDirSync.append(dirpath)
 		bSync = True
 	if bSync:
@@ -43,7 +49,7 @@ for dirpath, folders, files in os.walk(root):
 		destdir = os.path.join(syncdir,relpath)
 		for file in files:
 			filepath = os.path.join(dirpath, file)
-			if 'read' not in getTags(filepath):
+			if READ not in getTags(filepath):
 				if not os.path.exists(destdir):
 					print "Adding directory: {}".format(destdir)
 					os.makedirs(destdir)
@@ -54,7 +60,7 @@ for dirpath, folders, files in os.walk(root):
 		destdir = os.path.join(syncdir,relpath)
 		for file in files:
 			filepath = os.path.join(dirpath, file)
-			if 'sync' in getTags(filepath):
+			if SYNC in getTags(filepath):
 				if not os.path.exists(destdir):
 					os.makedirs(destdir)
 				filepathdest = os.path.join(destdir,file)
