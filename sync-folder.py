@@ -21,6 +21,7 @@ lExist=[]
 
 # list existing files
 for dirpath, folders, files in os.walk(syncdir):
+	folders[:] = [d for d in folders if d not in '.sync']
 	files = [f for f in files if not f[0] == '.']
 	for f in files:
 		lExist.append(os.path.join(dirpath,f))
@@ -29,7 +30,7 @@ for dirpath, folders, files in os.walk(syncdir):
 for dirpath, folders, files in os.walk(root):
 	files = [f for f in files if not f[0] == '.']
 	bSync = False
-	#check for parents with 'sync' tag
+	# check for parents with 'sync' tag
 	for p in lDirSync:
 		if os.path.commonprefix([os.path.dirname(dirpath),p]) == p:
 			bSync = True
@@ -72,10 +73,11 @@ for source, dest in lSync:
 		os.link(source, dest)
 
 for f in lExist:
-	print "Removing: {}".format(dest)
+	print "Removing: {}".format(f)
 	os.remove(f)
 
 for dirpath, folders, files in os.walk(syncdir):
+	folders[:] = [d for d in folders if d not in '.sync']
 	if not folders and not files:
 		print "Removing directory: {}".format(dirpath)
 		os.rmdir(dirpath)
