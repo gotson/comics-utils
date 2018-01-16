@@ -1,7 +1,7 @@
 comics-utils
 ============
 
-Scripts to manage my digital comics collection
+Scripts to manage my digital comics collection.
 
 cbz.py
 ------
@@ -51,11 +51,11 @@ You can also configure it as a folder action, to automatically perform post-proc
 
 sync-folder.py
 --------------
-Use OSX tags to create a replica of your directory structure for easy replication with [Cheetah Sync](http://www.jrtstudio.com/cheetah-sync-android-wireless-sync).
-Folders have to be tagged 'sync' (works on parent folders as well).
-Files tagged 'read' are ignored.
+Use OSX tags to create a replica of your directory structure for easy synchronization with any third party tool or cloud provider.
+Folders have to be tagged `sync` (works on parent folders as well).
+Files tagged `read` are ignored.
 
-You have to edit the source to change the source and destination folders.
+You have to edit the source code to change the source and destination folders.
 
 **Requires**
  * Python 2.7+
