@@ -16,9 +16,10 @@ Thanks to The Unarchiver, you can also process **PDF files** for cleanup !
 
 **Requires**
  * Python 2.7+
- * [jdberry/tag](https://github.com/jdberry/tag) (if using the --tags option)
- * [natsort](https://pypi.python.org/pypi/natsort)
- * [The Unarchiver command line tools](http://unarchiver.c3.cx/commandline)
+ * [jdberry/tag](https://github.com/jdberry/tag) (if using the --tags option) (`brew install tag`)
+ * [natsort](https://pypi.python.org/pypi/natsort) (`pip install natsort`)
+ * [The Unarchiver command line tools](http://unarchiver.c3.cx/commandline) (`brew install unar`)
+ 
 
 **Usage**
 ```
